@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ajax and Bootstrap demo</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="container py-4">
+      <h1>Ajax and Bootstrap demo</h1>
+      
+      <!-- Button trigger modal -->
+      <button type="button" class="btn btn-primary my-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        Launch demo modal
+      </button>
+
+      <!-- Modal Structure -->
+      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">Ajax example</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <!-- Target table populated asynchronously -->
+              <table id="ajaxContent" class="table"></table>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>    
+    </div>
+    
+    <!-- Bootstrap 5 JavaScript Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+    <!-- Ajax / Fetch Implementation -->
+    <script>
+      const myModalEl = document.getElementById('exampleModal');
+
+      // Listen for Bootstrap's event that fires immediately when the modal begins to open
+      myModalEl.addEventListener('show.bs.modal', event => {
+        var table = document.getElementById("ajaxContent");
+
+        // 1. Display loading spinner while request is in flight
+        table.innerHTML = '<div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>';
+
+        // 2. Call your PHP script asynchronously via Fetch
+        fetch('ajax.php') // Use relative URL or full mi-linux URL
+          // 3. Convert JSON response string into a usable JavaScript object/array
+          .then(response => response.json())
+          .then(response => {
+            // 4. Clear the loading spinner
+            table.innerHTML = '';
+
+            // 5. Iterate through the games list and insert rows into the table
+            response.forEach(game => {
+              var row = table.insertRow(0);
+              var cell1 = row.insertCell(0);
+              cell1.innerHTML = game.game_name;
+            });
+          })
+          .catch(err => {
+            // Log any fetch or parsing errors to the browser console
+            console.error('Fetch error:', err);
+            table.innerHTML = '<p class="text-danger">Failed to load data.</p>';
+          });
+      });
+    </script>
+  </body>
+</html>
